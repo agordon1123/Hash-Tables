@@ -23,6 +23,14 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
+        def hash(key):
+            total = 0
+            for i in range(0, len(key)):
+                key_ascii = ord(key[i])
+                total += key_ascii
+            
+            return total % self.capacity
+
         return hash(key)
 
 
