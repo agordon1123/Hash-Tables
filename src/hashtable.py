@@ -30,6 +30,8 @@ class HashTable:
                 total += key_ascii
             
             return total % self.capacity
+            # or
+            # return self._hash_mod(total)
 
         return hash(key)
 
@@ -59,8 +61,19 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash(key)
 
+        if self.storage[hashed_key] == None:
+            # create new LinkedPair
+            self.storage[hashed_key] = LinkedPair(hashed_key, value) # possibly instantiate LinkedList here?
+        else:
+            # capture last element in LinkedList
+            target = self.storage[hashed_key]
+            while target.next is not None:
+                copy = target
+                target = copy.next
+            # set next as value being inserted
+            target.next = LinkedPair(hashed_key, value)
 
 
     def remove(self, key):
