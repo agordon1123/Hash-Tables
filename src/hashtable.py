@@ -156,6 +156,7 @@ class HashTable:
         '''
         hashed_key = self._hash(key)
 
+        # this has multiple evaluations for the same thing
         if self.storage[hashed_key] == None:
             return None
         else:
@@ -163,6 +164,7 @@ class HashTable:
             if target.key == key:
                 return self.storage[hashed_key].value
             else:
+                # should this code work for 1 element?
                 # loop through LL
                 while target.next is not None:
                     if target.key == key:
@@ -185,8 +187,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # create new HashTable with double the capacity
+        copy = self.storage
+        self.capacity = self.capacity * 2
+        self.storage = [None] * self.capacity
+        
+        # copy over every element in range of old length
+        for i in range(0, len(copy)):
+            while copy[i] is not None:
+                hashed_key = self._hash(copy[i].key)
+                self.insert(copy[i].key, copy[i].value)
+                self.storage[hashed_key].next = copy[i].next
+                copy[i] = copy[i].next
 
 
 if __name__ == "__main__":
