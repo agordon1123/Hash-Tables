@@ -31,7 +31,8 @@ class HashTable:
             
             return total % self.capacity
             # or
-            # return self._hash_mod(total)
+            # restucture to use _hash_mod
+            # self._hash_mod(total)
 
         return hash(key)
 
@@ -67,35 +68,21 @@ class HashTable:
             # create new LinkedPair
             self.storage[hashed_key] = LinkedPair(key, value)
         else:
-            # capture last element in LinkedList
             target = self.storage[hashed_key]
-            
-            if target.key == key:
-                # overwrite
-                target.value = value
-                return
-            elif target.next == None:
-                # if at end, create new LinkedPair
-                target.next = LinkedPair(key, value)
-                return
-            else:
-                # loop through LL
-                while target.next is not None:
-                    if target.key == key:
-                        # overwrite
-                        target.value = value
-                        return
-                    elif target.next.key == key:
-                        # check next element because of loop condition
-                        target.next.value = value
-                        return  
-                    else:
-                        # iterate
-                        copy = target
-                        target = copy.next
-                # when at last element, set next as value being inserted
-                if target.next == None:
+
+            while target is not None:
+                if target.key == key:
+                    # overwrite
+                    target.value = value
+                    return
+                elif target.next == None:
+                    # if at end, create new LinkedPair
                     target.next = LinkedPair(key, value)
+                    return
+                else:
+                    # iterate
+                    copy = target
+                    target = copy.next
 
 
     def remove(self, key):
@@ -108,26 +95,21 @@ class HashTable:
         '''
         hashed_key = self._hash(key)
 
-        if key == "key-0":
-            print("now")
-
+        # if found at first element in LL
         if self.storage[hashed_key].key == key:
             copy = self.storage[hashed_key]
             del self.storage[hashed_key].key
-            if copy.next == None:
+            if copy.next:
+                self.storage[hashed_key].next = copy.next
+            else:
                 self.storage[hashed_key] = None
             return
+        
         else:
             # loop through and find
             target = self.storage[hashed_key]
 
             while target.next is not None:
-                # may be able to only check the next key and cut this down
-
-                # if target.key == key:
-                #     # delete
-                #     return
-
                 if target.next.key == key:
                     copy = target.next
                     del target.next
@@ -162,21 +144,18 @@ class HashTable:
         else:
             target = self.storage[hashed_key]
             if target.key == key:
+                # if found at first element
                 return self.storage[hashed_key].value
             else:
-                # should this code work for 1 element?
-                # loop through LL
+                # else loop through LL
                 while target.next is not None:
-                    if target.key == key:
-                        return target.value
-                    # if last element has desired key
-                    elif target.next.key == key:
+                    if target.next.key == key:
                         return target.next.value
-                    # keep moving
                     else:
+                        # iterate
                         copy = target
                         target = copy.next
-                # self.storage[hashed_key] has values but none have desired key
+                
                 return None
 
 
