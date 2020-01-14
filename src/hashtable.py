@@ -65,16 +65,37 @@ class HashTable:
 
         if self.storage[hashed_key] == None:
             # create new LinkedPair
-            self.storage[hashed_key] = LinkedPair(key, value) # possibly instantiate LinkedList here?
+            self.storage[hashed_key] = LinkedPair(key, value)
         else:
             # capture last element in LinkedList
             target = self.storage[hashed_key]
-            # loop through LL
-            while target.next is not None:
-                copy = target
-                target = copy.next
-            # set next as value being inserted
-            target.next = LinkedPair(key, value)
+            
+            if target.key == key:
+                # overwrite
+                target.value = value
+                return
+            elif target.next == None:
+                # if at end, create new LinkedPair
+                target.next = LinkedPair(key, value)
+                return
+            else:
+                # loop through LL
+                while target.next is not None:
+                    if target.key == key:
+                        # overwrite
+                        target.value = value
+                        return
+                    elif target.next.key == key:
+                        # check next element because of loop condition
+                        target.next.value = value
+                        return  
+                    else:
+                        # iterate
+                        copy = target
+                        target = copy.next
+                # when at last element, set next as value being inserted
+                if target.next == None:
+                    target.next = LinkedPair(key, value)
 
 
     def remove(self, key):
@@ -85,7 +106,9 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # hashed_key = self._hash(key)
+
+        
 
 
     def retrieve(self, key):
