@@ -95,36 +95,25 @@ class HashTable:
         '''
         hashed_key = self._hash(key)
 
-        # if found at first element in LL
-        if self.storage[hashed_key].key == key:
-            copy = self.storage[hashed_key]
-            del self.storage[hashed_key].key
-            if copy.next:
-                self.storage[hashed_key].next = copy.next
-            else:
-                self.storage[hashed_key] = None
-            return
-        
-        else:
-            # loop through and find
-            target = self.storage[hashed_key]
+        previous = None
+        target = self.storage[hashed_key]
 
-            while target.next is not None:
-                if target.next.key == key:
-                    copy = target.next
-                    del target.next
-                    if copy.next:
-                        target.next = copy.next
-                        return
+        if target is not None:
+            while target:
+                if target.key == key:
+                    if previous:
+                        # remove target link
+                        previous.next = target.next
                     else:
-                        target.next = None
-                        return
+                        # shift next element to front
+                        self.storage[hashed_key] = target.next
+                    return
                 else:
-                    # iterate
-                    copy = target
-                    target = copy.next
+                    # iterate:
+                    previous = target
+                    target = previous.next
             
-            return "Warning! Key not found!"
+        return "Warning! Key not found!"
         
 
 
@@ -138,7 +127,6 @@ class HashTable:
         '''
         hashed_key = self._hash(key)
 
-        # this has multiple evaluations for the same thing
         if self.storage[hashed_key] == None:
             return None
         else:
@@ -172,11 +160,10 @@ class HashTable:
         self.storage = [None] * self.capacity
         
         # copy over every element in range of old length
-        for i in range(0, len(copy)):
+        for i in range(len(copy)):
             while copy[i] is not None:
-                hashed_key = self._hash(copy[i].key)
                 self.insert(copy[i].key, copy[i].value)
-                self.storage[hashed_key].next = copy[i].next
+                # iterate
                 copy[i] = copy[i].next
 
 
