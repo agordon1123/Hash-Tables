@@ -106,8 +106,43 @@ class HashTable:
 
         Fill this in.
         '''
-        # hashed_key = self._hash(key)
+        hashed_key = self._hash(key)
 
+        if key == "key-0":
+            print("now")
+
+        if self.storage[hashed_key].key == key:
+            copy = self.storage[hashed_key]
+            del self.storage[hashed_key].key
+            if copy.next == None:
+                self.storage[hashed_key] = None
+            return
+        else:
+            # loop through and find
+            target = self.storage[hashed_key]
+
+            while target.next is not None:
+                # may be able to only check the next key and cut this down
+
+                # if target.key == key:
+                #     # delete
+                #     return
+
+                if target.next.key == key:
+                    copy = target.next
+                    del target.next
+                    if copy.next:
+                        target.next = copy.next
+                        return
+                    else:
+                        target.next = None
+                        return
+                else:
+                    # iterate
+                    copy = target
+                    target = copy.next
+            
+            return "Warning! Key not found!"
         
 
 
