@@ -23,6 +23,17 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
+        def hash(key):
+            total = 0
+            for i in range(0, len(key)):
+                key_ascii = ord(key[i])
+                total += key_ascii
+            
+            return total % self.capacity
+            # or
+            # restucture to use _hash_mod
+            # self._hash_mod(total)
+
         return hash(key)
 
 
@@ -51,8 +62,27 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash(key)
 
+        if self.storage[hashed_key] == None:
+            # create new LinkedPair
+            self.storage[hashed_key] = LinkedPair(key, value)
+        else:
+            target = self.storage[hashed_key]
+
+            while target is not None:
+                if target.key == key:
+                    # overwrite
+                    target.value = value
+                    return
+                elif target.next == None:
+                    # if at end, create new LinkedPair
+                    target.next = LinkedPair(key, value)
+                    return
+                else:
+                    # iterate
+                    copy = target
+                    target = copy.next
 
 
     def remove(self, key):
@@ -63,7 +93,28 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash(key)
+
+        previous = None
+        target = self.storage[hashed_key]
+
+        if target is not None:
+            while target:
+                if target.key == key:
+                    if previous:
+                        # remove target link
+                        previous.next = target.next
+                    else:
+                        # shift next element to front
+                        self.storage[hashed_key] = target.next
+                    return
+                else:
+                    # iterate:
+                    previous = target
+                    target = previous.next
+            
+        return "Warning! Key not found!"
+        
 
 
     def retrieve(self, key):
@@ -74,7 +125,26 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash(key)
+
+        if self.storage[hashed_key] == None:
+            return None
+        else:
+            target = self.storage[hashed_key]
+            if target.key == key:
+                # if found at first element
+                return self.storage[hashed_key].value
+            else:
+                # else loop through LL
+                while target.next is not None:
+                    if target.next.key == key:
+                        return target.next.value
+                    else:
+                        # iterate
+                        copy = target
+                        target = copy.next
+                
+                return None
 
 
     def resize(self):
@@ -84,8 +154,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # create new HashTable with double the capacity
+        copy = self.storage
+        self.capacity = self.capacity * 2
+        self.storage = [None] * self.capacity
+        
+        # copy over every element in range of old length
+        for i in range(len(copy)):
+            while copy[i] is not None:
+                self.insert(copy[i].key, copy[i].value)
+                # iterate
+                copy[i] = copy[i].next
 
 
 if __name__ == "__main__":
